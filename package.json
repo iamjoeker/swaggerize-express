@@ -1,6 +1,6 @@
 {
-  "name": "swaggerize-express",
-  "version": "4.0.6",
+  "name": "@juliusza/swaggerize-express",
+  "version": "4.0.7",
   "author": "Trevor Livingston <trlivingston@paypal.com>",
   "contributors": [
     "Trevor Livingston <tlivings@gmail.com>",
@@ -24,9 +24,9 @@
   "main": "./lib/index",
   "repository": {
     "type": "git",
-    "url": "git://github.com/krakenjs/swaggerize-express.git"
+    "url": "git://github.com/juliusza/swaggerize-express.git"
   },
-  "bugs": "http://github.com/krakenjs/swaggerize-express/issues",
+  "bugs": "http://github.com/juliusza/swaggerize-express/issues",
   "engines": {
     "node": "<=4.x"
   },
