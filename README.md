@@ -1,7 +1,7 @@
 # swaggerize-express
 
-[![Build Status](https://travis-ci.org/krakenjs/swaggerize-express.svg?branch=master)](https://travis-ci.org/krakenjs/swaggerize-express)  
-[![NPM version](https://badge.fury.io/js/swaggerize-express.png)](http://badge.fury.io/js/swaggerize-express)  
+![Actions Status](https://wdp9fww0r9.execute-api.us-west-2.amazonaws.com/production/badge/iamjoeker/swaggerize-express)
+[![npm version](https://badge.fury.io/js/%40iamjoeker%2Fswaggerize-express.svg)](https://badge.fury.io/js/%40iamjoeker%2Fswaggerize-express)
 
 `swaggerize-express` is a design-driven approach to building RESTful apis with [Swagger](http://swagger.io) and [Express](http://expressjs.com).
 
@@ -13,7 +13,7 @@
 - Input validation.
 
 See also:
-- [swaggerize-routes](https://github.com/krakenjs/swaggerize-routes)
+- [@iamjoeker/swaggerize-routes](https://github.com/iamjoeker/swaggerize-routes)
 - [swaggerize-hapi](https://github.com/krakenjs/swaggerize-hapi)
 - [generator-swaggerize](https://www.npmjs.org/package/generator-swaggerize)
 
@@ -56,33 +56,43 @@ You now have a working api and can use something like [Swagger UI](https://githu
 ### Manual Usage
 
 ```javascript
-var swaggerize = require('swaggerize-express');
+const swaggerize = require('@iamjoeker/swaggerize-express');
 
 app.use(swaggerize({
-    api: require('./api.json'),
+    api: Path.resolve('./api.json'),
     docspath: '/api-docs',
-    handlers: './handlers'
+    handlers: './handlers',
+    security: './security' //Optional - security authorize handlers as per `securityDefinitions`
 }));
 ```
 
 Options:
 
-- `api` - a valid Swagger 2.0 document.
+- `api` - (*Object*) or (*String*) or (*Promise*) - (required) - a valid Swagger 2.0 document. api can be one of the following.
+    - A relative or absolute path to the Swagger api document.
+    - A URL of the Swagger api document.
+    - The swagger api Object
+    - A promise (or a `thenable`) that resolves to the swagger api Object.
 - `docspath` - the path to expose api docs for swagger-ui, etc. Defaults to `/`.
-- `handlers` - either a directory structure for route handlers or a premade object (see *Handlers Object* below).
+- `handlers` - - (*Object*) or (*String*) - (required) - either a directory structure for route handlers or a pre-created object (see *Handlers Object* below). If `handlers` option is not provided, route builder will try to use the default `handlers` directory (only if it exists). If there is no `handlers` directory available, then the route builder will try to use the `x-handler` swagger schema extension.
 - `express` - express settings overrides.
+- `security` - (*String*) - (optional) - directory to scan for authorize handlers corresponding to `securityDefinitions`.
+- `validated` -  (*Boolean*) - (optional) - Set this property to `true` if the api is already validated against swagger schema and already dereferenced all the `$ref`. This is really useful to generate validators for parsed api specs. Default value for this is `false` and the api will be validated using [swagger-parser validate](https://github.com/BigstickCarpet/swagger-parser/blob/master/docs/swagger-parser.md#validateapi-options-callback).
+- `joischema` - (*Boolean*) - (optional) - Set to `true` if you want to use [Joi](https://github.com/hapijs/joi) schema based Validators. Swaggerize modules use [enjoi](https://github.com/tlivings/enjoi) - The json to joi schema converter - to build the validator functions, if `joischema` option is set to `true`.
 
 After using this middleware, a new property will be available on the `app` called `swagger`, containing the following properties:
 
 - `api` - the api document.
 - `routes` - the route definitions based on the api document.
 
+An event `route` will be triggered as soon as `swaggerize-express` has completed configuring routes and validator middlewares.
+
 Example:
 
 ```javascript
 var http = require('http');
 var express = require('express');
-var swaggerize = require('swaggerize-express');
+var swaggerize = require('@iamjoeker/swaggerize-express');
 
 app = express();
 
@@ -94,9 +104,12 @@ app.use(swaggerize({
     handlers: './handlers'
 }));
 
-server.listen(port, 'localhost', function () {
-    app.swagger.api.host = server.address().address + ':' + server.address().port;
+app.on('route', () => {
+    server.listen(port, 'localhost', () => {
+        app.swagger.api.host = server.address().address + ':' + server.address().port;
+    });
 });
+
 ```
 
 ### Mount Path
@@ -213,7 +226,7 @@ Handler keys in files do *not* have to be namespaced in this way.
 ### Security Middleware
 
 If a security definition exists for a path in the swagger API definition, and an appropriate authorize function exists (defined using
-`x-authorize` in the `securityDefinitions` as per [swaggerize-routes](https://github.com/krakenjs/swaggerize-routes#security-object)),
+`x-authorize` in the `securityDefinitions` as per [swaggerize-routes](https://github.com/iamjoeker/swaggerize-routes#security-object)),
 then it will be used as middleware for that path.
 
 In addition, a `requiredScopes` property will be injected onto the `request` object to check against.

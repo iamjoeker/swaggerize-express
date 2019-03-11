@@ -1,27 +1,28 @@
 'use strict';
 
-var test = require('tape'),
-    expressroutes = require('../lib/expressroutes'),
-    express = require('express');
+const test = require('tape');
+const expressRoutes = require('../lib/expressroutes');
+const express = require('express');
 
 test('express routes', function (t) {
 
     t.test('test api', function (t) {
         t.plan(4);
 
-        var app = express(), child = express();
+        const app = express();
+        const child = express();
 
         child.once('mount', function (parent) {
-            var stack;
+            let stack;
 
-            expressroutes(app, {
+            expressRoutes(app, {
                 api: require('./fixtures/defs/pets.json'),
                 routes: [
                     {
                         method: 'get',
                         path: '/pets/:id',
                         validators: [],
-                        handler: function (req, res) {}
+                        handler: function (req, res) { }
                     }
                 ]
             });
@@ -40,12 +41,13 @@ test('express routes', function (t) {
     t.test('test no handlers', function (t) {
         t.plan(2);
 
-        var app = express(), child = express();
+        const app = express();
+        const child = express();
 
         child.once('mount', function (parent) {
-            var stack;
+            let stack;
 
-            expressroutes(app, {
+            expressRoutes(app, {
                 api: require('./fixtures/defs/pets.json'),
                 validators: [],
                 routes: []
@@ -63,12 +65,13 @@ test('express routes', function (t) {
     t.test('test middlewares in handler', function (t) {
         t.plan(5);
 
-        var app = express(), child = express();
+        const app = express();
+        const child = express();
 
         child.once('mount', function (parent) {
-            var stack;
+            let stack;
 
-            expressroutes(app, {
+            expressRoutes(app, {
                 api: require('./fixtures/defs/pets.json'),
                 routes: [
                     {
@@ -76,8 +79,8 @@ test('express routes', function (t) {
                         path: '/pets',
                         validators: [],
                         handler: [
-                            function m1(req, res, next) {},
-                            function (req, res) {}
+                            function m1(req, res, next) { },
+                            function (req, res) { }
                         ]
                     }
                 ]

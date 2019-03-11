@@ -4,9 +4,6 @@ node_js:
 branches:
   only:
     - master
-    - v1.0.0
-    - v2.0.0
-    - v3.0.0
 script:
   - "npm run cover"
   - "npm run lint"
