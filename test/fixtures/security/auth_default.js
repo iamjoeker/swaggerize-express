@@ -16,7 +16,8 @@ module.exports = function authorize(req, res, next) {
             next(error);
             return;
         }
-        next(error);
+
+        next();
     });
 }
 
